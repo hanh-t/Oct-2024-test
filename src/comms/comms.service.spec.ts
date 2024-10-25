@@ -51,8 +51,18 @@ describe('CommsService', () => {
     expect(service).toBeDefined();
   });
 
-  it('getCustomer() should return a customer by id', () => {
-    const customer = service.getCustomer('1');
-    expect(customer).toBe(mockCustomers[0]);
+  it('getCatNames() should return formatted cat names for active subscriptions', () => {
+    const catNames = service.getCatNames(mockCustomers[0]);
+    expect(catNames).toBe('Whiskers and Smokey');
+  });
+
+  it('calculateTotalPrice() should return total price of active subscriptions', () => {
+    const totalPrice = service.calculateTotalPrice(mockCustomers[0]);
+    expect(totalPrice).toBe(126.75);
+  });
+
+  it('formatPrice() should format the price correctly', () => {
+    const price = service.formatPrice(100.123);
+    expect(price).toBe('£100.12');
   });
 });
