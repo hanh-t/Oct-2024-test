@@ -1,135 +1,20 @@
-# KatKin's Full-stack Coding Test
+# Octo 2024 Test
 
-## BEFORE YOU BEGIN
+# Solution
 
-Please take your time to thoroughly read through this README. If anything is unclear or you think there is a mistake somewhere, please let us know via email. We recommend you spend around an hour or so on this test. Submission instructions are at the bottom of this README.
+This was the first time for me using NestJS so there was a fair amount of reading and watching videos ahead of starting! I really enjoyed the backend part of the task and spent the majority of my time there learning about NestJS projects, so much so that I did not leave myself enough time to finish the frontend section, and unfortunately ran into a node issue which meant I'm unable to send you the final, completed code for the client but have scaffolded a basic structure using styled-components.
 
-This test is split into two parts - a backend REST API section, and a frontend section. If you struggle to do the backend section, then please do the frontend section to the best of your ability by either faking/stubbing or not doing any API calls.
+Some thoughts on the backend section and where I see improvements:
 
-We suggest you spend around 60-90 minutes on this in total, and do as much as you can. Do not worry if you do not finish everything. We also encourage you to:
+- With more time I would have liked to add more tests and TDD the backend process but as it was new to me I had to concentrate on creating the endpoint.
+- It's good practice to provide API documentation and I like that NestJS has dedicated support for it through Swagger. I'm currently working with openAPI in a Kotlin project and lilke it. This would be something to add once the number of endpoints grow/if I had more time.
+- Data metrics/tooling and error handling are also both very important so could look to incorporate something with a tool like Datadog or Sentry which could monitor for issues and keep logs.
 
-- Use Google, Stackoverflow, online documentation, ChatGPT as much as you require.
-- Write tests if you think they are beneficial, but only if you think they are within reason of the time limit.
-- Install and use any third party packages if you see fit
-- Think about what you would do if you had more time, or if this was a real-world production project. We may ask further questions about your solution in further interviews.
+Further thoughts:
 
-## How will we assess your solution?
+- For client-side API consumption, I would have liked to use something like React Query which I'm familiar with and enjoy using because of the way it handles fetching, refetching and caching so well out the box.
+- As mentioned above, I ran into a node issue and ran out of time, but if I'd had time to do this justice, I would have used react-query to fetch the data and rendered the correct expression within the returned message to the user.
+- I used styled-components in this instance but a design system or perhaps a Storybook package would have sped up creating this and would ensure consistency across products and multi-platform development.
+- Tests are also a given here - either through end-to-end with something like Playwright or unit and integration tests with React Testing Library or similar.
 
-- Readability and how well-typed your code is
-- The code should be written in Typescript and _must_ compile and run, on Node 18 or later.
-- We take into account your previous experience with TypeScript.
-- Don't implement anything unnecessary - i.e. authentication, database, containerization. We won't give additional credit for that.
-- 
-## Description
- As a highly personalized service, communications to our customers must be tailored purr-fectly and personalized to each and every customer. As we have multiple channels of communications (i.e. emails, SMS, landing pages), we like to keep the templating logic for this channel-agnostic and in a dedicated REST API service.
-
- For example, calling `GET /comms/welcome-fresh/<USER-ID>` might return
-```json
-{
-    "message": "Welcome to KatKin, <full-name>! We're super excited for <cat1> and <cat2> to join the KatKin club and start loving fresh!"
-}
-```
-with the interpolated values populated with that specific customer's (and cat's) data. This endpoint could then be used to generate content for SMSs, emails, or personalized web pages.
-
-
-## The setup
-A skeletal backend has already been setting up for you, using TypeScript and NestJS - the language and framework we use at KatKin. To run this backend, you can do `yarn start`.
-
-There is no frontend setup - you are free to setup one of your own React-based one as you choose, either within the same repository or in a different repository.
-
-There is a `data.json` file containing user data in this repository, which you should read from in place of a database.
-
-## 1. The Backend Task
-
-Within this codebase, create an endpoint `/comms/your-next-delivery/<USER-ID>`, that looks up the corresponding user's data, and returns a JSON payload of the following shape:
-
-```JSON
-{
-    "title": "Your next delivery for <cat names, separated by comma or 'and'>",
-    "message": "Hey <firstName>! In two days' time, we'll be charging you for your next order for <cat names, formatted as described below>'s fresh food.",
-    "totalPrice": <total price, calculated via the formula shown in a later section in this README>,
-    "freeGift": <true if the total price exceeds 120 pounds, otherwise false>
-}
-```
-
-Cat names should be formatted in a grammatically correct manner, i.e. just `A` if there's a single cat named A, `A and B` if there's two cats, `A, B and C` if there's three or more cats.
-
-For example, with the following user:
-
-```JSON
-{
-  "id": "ff535484-6880-4653-b06e-89983ecf4ed5",
-  "firstName": "Kayleigh",
-  "lastName": "Wilderman",
-  "email": "Kayleigh_Wilderman@hotmail.com",
-  "cats": [
-    {
-      "name": "Dorian",
-      "subscriptionActive": true,
-      "breed": "Thai",
-      "pouchSize": "C"
-    },
-    {
-      "name": "Ocie",
-      "subscriptionActive": true,
-      "breed": "Somali",
-      "pouchSize": "F"
-    },
-    {
-      "name": "Eldridge",
-      "subscriptionActive": false,
-      "breed": "Himalayan",
-      "pouchSize": "A"
-    }
-  ]
-}
-```
-hitting `/comms/your-next-delivery/ff535484-6880-4653-b06e-89983ecf4ed5` should return the following body:
-```JSON
-{
-    "title": "Your next delivery for Dorian and Ocie",
-    "message": "Hey Kayleigh! In two days' time, we'll be charging you for your next order for Dorian and Ocie's fresh food.",
-    "totalPrice": 134.00,
-    "freeGift": true
-}
-```
-
-### Price calculation
-
-Cats come in different shapes and sizes. Bigger cats need more food, and vice versa. Our food is delivered in pouches, hence we use the term _pouch size_ to refer to how much food a cat needs. Therefore, every cat in the dataset will have a `pouchSize` attributed to them - between `A` to `F`. Every pouch size will have its own price.
-
-A user's order price is there calculated as the sum of their _active_ cats' pouch size prices. The pouch size prices are described below:
-
-```
-A -> 55.50 GBP
-B -> 59.50 GBP
-C -> 62.75 GBP
-D -> 66.00 GBP
-E -> 69.00 GBP
-F -> 71.25 GBP
-```
-
-So for example, if a user had 3 cats, each on pouch size A, B, C, but only the first two cats (on A and B) currently have an active subscription, then their price would be 55.50 + 59.50 = £115.00 pounds.
-
-
-## 2. The Frontend Task
-
-Using React (or your favourite React-based metaframework of choice), create a frontend with just one page - `/welcome/<USER-ID>`, which calls the API endpoint described in the previous step and renders the message in a style similar to the figma file provided [here](https://www.figma.com/design/b6Q7B8dBr6QbdqkhPNoFgD/Untitled?node-id=0-1).
-
-You can:
-  - Create a separate folder/repository to do this if you choose.
-  - Use any libraries/frameworks you want, i.e. Tailwind, styled components (or not - feel free to just use regular styling/CSS as well).
-  - Use any project generators you want (i.e. `create-next-app`, `create-react-app`, `create-vite-app`)
-
-_Note_: We aren't expecting an exact 1-to-1 copy of the design, i.e. exact fonts, spacing, or colors. Just get roughly close enough. __Use any random image of a cat__ that you can find.
-
-
-
-# Submission
-
-Either:
-
-1. Make your solution publicly available in a Git repository(s) and send us the URL(s). You can have a separate frontend/backend repository if you want. Please make sure to name the repository something inconspicuous, i.e, don't put `KatKin` in the name. Do not fork this repository as your solution will be visible to all other candidates.
-2. Or, if option 1 is unfeasible, zip up all your code (please do not include `node_modules`!) and send it via email to tech@katkin.com
-
-We would also appreciate it if you can write a sentence or two about what you think of this test and/or and how we could improve it.
+I feel the test was fair with everyone being given the same amount of time to complete it and I really enjoyed trying out something completely new - even if I ended up fluffing up my strongest area! Thank you!
