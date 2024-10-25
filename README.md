@@ -1,4 +1,4 @@
-# Octo 2024 Test
+# Oct 2024 Test
 
 # Solution
 
